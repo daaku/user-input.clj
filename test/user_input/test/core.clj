@@ -22,3 +22,15 @@
         "no change to input and no errors")
     (is (= [input fixed-error-assoc] (user-input/run [(fixed-error)] input))
         "no change to input and fixed errors")))
+
+(def fixed-transform-assoc {:answer 42})
+(user-input/deftransform fixed-transform [data] fixed-transform-assoc)
+(user-input/deftransform no-transforms [data] data)
+
+(deftest deftransforms
+  (let [input {:foo 42 :answer "bar"}]
+    (is (= [input {}] (user-input/run [(no-transforms)] input))
+        "no change to input and no errors")
+    (is (= [fixed-transform-assoc {}]
+           (user-input/run [(fixed-transform)] input))
+        "fixed new input and no errors")))
