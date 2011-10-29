@@ -38,5 +38,11 @@
 (deftest filters
   (let [base {:a 1 :b 2}
         junk (merge base {:c 3 :d 4})]
-    (is (= [base {}] (user-input/run [(apply user-input/filter (keys base))]
-                                     junk)))))
+    (is (= [base {}]
+           (user-input/run [(apply user-input/filter (keys base))] junk)))))
+
+(deftest trims
+  (is (= [{:a "1" :b "2"} {}]
+         (user-input/run [(user-input/trim)] {:a " 1" :b "\n 2\n\n "}))
+      "trims whitespace including newlines")
+  (is (= [{:a "1\n2"} {}] (user-input/run [(user-input/trim)] {:a " 1\n2\n"}))))
