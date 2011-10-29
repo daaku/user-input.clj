@@ -34,3 +34,9 @@
     (is (= [fixed-transform-assoc {}]
            (user-input/run [(fixed-transform)] input))
         "fixed new input and no errors")))
+
+(deftest filters
+  (let [base {:a 1 :b 2}
+        junk (merge base {:c 3 :d 4})]
+    (is (= [base {}] (user-input/run [(apply user-input/filter (keys base))]
+                                     junk)))))
