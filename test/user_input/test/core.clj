@@ -46,3 +46,10 @@
          (user-input/run [(user-input/trim)] {:a " 1" :b "\n 2\n\n "}))
       "trims whitespace including newlines")
   (is (= [{:a "1\n2"} {}] (user-input/run [(user-input/trim)] {:a " 1\n2\n"}))))
+
+(defn- error-keys [fns data]
+  (set (keys (get (user-input/run fns data) 1))))
+
+(deftest requires
+  (is (= #{:a} (error-keys [(user-input/required :a)] {})) "a error")
+  (is (= #{} (error-keys [(user-input/required :a)] {:a "1"})) "no error"))
