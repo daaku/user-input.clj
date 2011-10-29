@@ -38,6 +38,13 @@
 (defn- trim-if-string [val]
   (if (string? val) (str-trim val) val))
 
+(defn- missing? [val]
+  (cond
+    (nil? val) true
+    (string? val) (blank? val)
+    (seq? val) (empty? val)
+    :else false))
+
 (deftransform filter [data & keys]
   (into {} (clojure.core/filter (fn [[k v]] (some #(= % k) keys)) data)))
 
@@ -45,10 +52,11 @@
   (into {} (map (fn [[k v]] [k (trim-if-string v)]) data)))
 
 (defvalidator required [data & keys]
-  (apply merge (map #(if (blank? (get data %)) {% "This is required."}) keys)))
+  (apply merge
+         (map #(if (missing? (get data %)) {% "This is required."}) keys)))
 
 (defvalidator at-least-one-of [data & keys]
-  (if (every? #(blank? (get data %)) keys)
+  (if (every? #(missing? (get data %)) keys)
     (zipmap keys
             (repeatedly (constantly (str "One of "
                                          (join-keys " or " keys)
@@ -64,7 +72,7 @@
 
 (defvalidator email [data key]
   (if-let [value (get data key)]
-    (if (and (not (blank? value)) (not (is-email? value)))
+    (if (and (not (missing? value)) (not (is-email? value)))
       {key "Must be a valid email address."})))
 
 (defvalidator phone [data key]

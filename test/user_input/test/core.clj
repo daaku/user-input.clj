@@ -52,8 +52,10 @@
 
 (deftest requires
   (is (= #{:a} (error-keys [(user-input/required :a)] {})) "a error")
-  (is (= #{} (error-keys [(user-input/required :a)] {:a "1"})) "no error"))
+  (is (= #{} (error-keys [(user-input/required :a)] {:a "1"})) "no error")
+  (is (= #{} (error-keys [(user-input/required :a)] {:a 1})) "int value"))
 
 (deftest at-least-one-of
   (is (= #{:a :b} (error-keys [(user-input/at-least-one-of :a :b)] {})))
-  (is (= #{} (error-keys [(user-input/at-least-one-of :a :b)] {:a "1"}))))
+  (is (= #{} (error-keys [(user-input/at-least-one-of :a :b)] {:a "1"})))
+  (is (= #{} (error-keys [(user-input/at-least-one-of :a :b)] {:a 1}))))
