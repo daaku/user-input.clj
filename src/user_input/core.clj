@@ -4,8 +4,9 @@
   {:author "Naitik Shah"}
   (:refer-clojure :exclude [filter])
   (:use
-    [clojure.string :only [join trim blank?] :rename {trim str-trim}]
-    [clojure.contrib.string :only [as-str]]))
+    [clojure.string :only [join trim blank?] :rename {trim str-trim}]))
+
+(defn as-str [x] (if (instance? clojure.lang.Named x) (name x) (str x)))
 
 (defn- join-keys [last-sep keys]
   (case (count keys)
