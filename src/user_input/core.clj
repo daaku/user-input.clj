@@ -61,6 +61,9 @@
 (deftransform trim [data]
   (into {} (map (fn [[k v]] [k (trim-if-string v)]) data)))
 
+(deftransform drop-empty [data]
+  (into {} (clojure.core/filter (fn [[k v]] (not (missing? v))) data)))
+
 (defvalidator required [data & keys]
   (apply merge
          (map #(if (missing? (get data %)) {% "This is required."}) keys)))

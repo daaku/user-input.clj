@@ -50,6 +50,10 @@
       "trims whitespace including newlines")
   (is (= [{:a "1\n2"} {}] (user-input/run [(user-input/trim)] {:a " 1\n2\n"}))))
 
+(deftest drop-empty
+  (is (= [{:a 1} {}]
+         (user-input/run [(user-input/drop-empty)] {:a 1 :b ""}))))
+
 (defn- error-keys [fns data]
   (set (keys (get (user-input/run fns data) 1))))
 
