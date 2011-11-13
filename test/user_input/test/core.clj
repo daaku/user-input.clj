@@ -59,3 +59,15 @@
   (is (= #{:a :b} (error-keys [(user-input/at-least-one-of :a :b)] {})))
   (is (= #{} (error-keys [(user-input/at-least-one-of :a :b)] {:a "1"})))
   (is (= #{} (error-keys [(user-input/at-least-one-of :a :b)] {:a 1}))))
+
+(deftest drop-unless-error
+  (is (= [{:a 1} {}] (user-input/run [(user-input/drop :b)] {:a 1 :b 2})))
+  (is (= {:a 1 :b 2} (first (user-input/run [(user-input/required :c)
+                                             (user-input/drop :b)]
+                                            {:a 1 :b 2})))))
+
+(deftest default
+  (is (= [{:a 1 :b 2} {}] (user-input/run [(user-input/default :b 2)] {:a 1})))
+  (is (= {:a 1} (first (user-input/run [(user-input/required :c)
+                                        (user-input/default :b 2)]
+                                       {:a 1})))))

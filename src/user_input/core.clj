@@ -2,7 +2,7 @@
   "A library to process incoming user input, including transforming it and
   validating it, returning error messages as appropriate."
   {:author "Naitik Shah"}
-  (:refer-clojure :exclude [filter])
+  (:refer-clojure :exclude [filter drop])
   (:use
     [clojure.string :only [join trim blank?] :rename {trim str-trim}]))
 
@@ -29,12 +29,17 @@
 (defmacro defvalidator [name args & body]
   (let [[data & options] args]
     `(defn ~name [~@options]
-       (fn [~data] [~data (do ~@body)]))))
+       (fn [~data errors#] [~data (merge (do ~@body) errors#)]))))
 
 (defmacro deftransform [name args & body]
   (let [[data & options] args]
     `(defn ~name [~@options]
-       (fn [~data] [(do ~@body) {}]))))
+       (fn [~data errors#] [(do ~@body) errors#]))))
+
+(defmacro defpostprocess [name args & body]
+  (let [[data & options] args]
+    `(defn ~name [~@options]
+       (fn [~data errors#] [(if (empty? errors#) (do ~@body) ~data) errors#]))))
 
 (defn- trim-if-string [val]
   (if (string? val) (str-trim val) val))
@@ -83,10 +88,11 @@
   (if (not (= (get data main) (get data confirm)))
     {confirm "Passwords do not match."}))
 
+(defpostprocess drop [data & keys]
+  (apply dissoc data keys))
+
+(defpostprocess default [data & defaults]
+  (merge (apply assoc {} defaults) data))
+
 (defn run [fns data]
-  (reduce
-    (fn [[old-data old-errors] f]
-      (let [[new-data new-errors] (f old-data)]
-        [new-data (merge new-errors old-errors)]))
-    [data {}]
-    fns))
+  (reduce (fn [[data errors] f] (f data errors)) [data {}] fns))

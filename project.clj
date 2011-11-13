@@ -1,4 +1,4 @@
-(defproject user-input "1.0.2"
+(defproject user-input "1.0.3"
   :description "Transform, validate and prepare user input."
   :dependencies
     [[org.clojure/clojure "1.3.0"]]
