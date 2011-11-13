@@ -29,7 +29,9 @@
 (defmacro defvalidator [name args & body]
   (let [[data & options] args]
     `(defn ~name [~@options]
-       (fn [~data errors#] [~data (merge (do ~@body) errors#)]))))
+       (fn [data# errors#]
+         (let [~data data#]
+           [data# (merge (do ~@body) errors#)])))))
 
 (defmacro deftransform [name args & body]
   (let [[data & options] args]
@@ -39,7 +41,9 @@
 (defmacro defpostprocess [name args & body]
   (let [[data & options] args]
     `(defn ~name [~@options]
-       (fn [~data errors#] [(if (empty? errors#) (do ~@body) ~data) errors#]))))
+       (fn [data# errors#]
+         (let [~data data#]
+           [(if (empty? errors#) (do ~@body) data#) errors#])))))
 
 (defn- trim-if-string [val]
   (if (string? val) (str-trim val) val))

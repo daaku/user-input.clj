@@ -15,13 +15,16 @@
 (def fixed-error-assoc {:answer 42})
 (user-input/defvalidator fixed-error [data] fixed-error-assoc)
 (user-input/defvalidator no-errors [data] {})
+(user-input/defvalidator uses-destructuring [{:keys [a] :as data}] {})
 
 (deftest defvalidators
   (let [input {:foo 42 :answer "bar"}]
     (is (= [input {}] (user-input/run [(no-errors)] input))
         "no change to input and no errors")
     (is (= [input fixed-error-assoc] (user-input/run [(fixed-error)] input))
-        "no change to input and fixed errors")))
+        "no change to input and fixed errors")
+    (is (= [input {}] (user-input/run [(uses-destructuring)] input))
+        "no change to input and no errors")))
 
 (def fixed-transform-assoc {:answer 42})
 (user-input/deftransform fixed-transform [data] fixed-transform-assoc)
