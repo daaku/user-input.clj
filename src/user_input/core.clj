@@ -48,7 +48,7 @@
 (defn- trim-if-string [val]
   (if (string? val) (str-trim val) val))
 
-(defn- missing? [val]
+(defn missing? [val]
   (cond
     (nil? val) true
     (string? val) (blank? val)
