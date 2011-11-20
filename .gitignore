@@ -1,5 +1,6 @@
 *.jar
 .cake
+.lein-deps-sum
 .lein-failures
 lib
 pom.xml
