@@ -61,8 +61,13 @@
 (deftransform trim [data]
   (into {} (map (fn [[k v]] [k (trim-if-string v)]) data)))
 
-(deftransform drop-empty [data]
-  (into {} (clojure.core/filter (fn [[k v]] (not (missing? v))) data)))
+(deftransform drop-empty [data & keys]
+  (let [keys (if (seq keys) (set keys) nil)]
+    (into {} (clojure.core/filter
+               (fn [[k v]] (if (and keys (not (keys k)))
+                             true
+                             (not (missing? v))))
+                 data))))
 
 (defvalidator required [data & keys]
   (apply merge

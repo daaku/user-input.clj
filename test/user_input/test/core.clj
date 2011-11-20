@@ -52,7 +52,9 @@
 
 (deftest drop-empty
   (is (= [{:a 1} {}]
-         (user-input/run [(user-input/drop-empty)] {:a 1 :b ""}))))
+         (user-input/run [(user-input/drop-empty)] {:a 1 :b ""})))
+  (is (= [{:a 1 :c ""} {}]
+         (user-input/run [(user-input/drop-empty :b)] {:a 1 :b "" :c ""}))))
 
 (defn- error-keys [fns data]
   (set (keys (get (user-input/run fns data) 1))))
