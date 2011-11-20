@@ -2,7 +2,7 @@
   "A library to process incoming user input, including transforming it and
   validating it, returning error messages as appropriate."
   {:author "Naitik Shah"}
-  (:refer-clojure :exclude [filter drop])
+  (:refer-clojure :exclude [filter drop float double])
   (:use
     [clojure.string :only [join trim blank?] :rename {trim str-trim}]))
 
@@ -105,6 +105,23 @@
 
 (defpostprocess default [data & defaults]
   (merge (apply assoc {} defaults) data))
+
+(defmacro defnumber-parser [name parse cast thing]
+  `(defn ~name [key#]
+     (let [er# {key# (str "Must be a valid " ~thing ".")}]
+       (fn [data# errors#]
+         (if-let [val# (data# key#)]
+           (try
+             [(assoc data# key# (if (string? val#)
+                                  (~parse val#)
+                                  (~cast val#)))
+              errors#]
+             (catch NumberFormatException e# [data# (merge er# errors#)])
+             (catch ClassCastException e# [data# (merge er# errors#)])))))))
+
+(defnumber-parser integer Integer/parseInt int "integer")
+(defnumber-parser float Float/parseFloat clojure.core/float "number")
+(defnumber-parser double Double/parseDouble clojure.core/double "number")
 
 (defn run [fns data]
   (reduce (fn [[data errors] f] (f data errors)) [data {}] fns))

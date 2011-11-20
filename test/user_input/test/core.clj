@@ -80,3 +80,28 @@
   (is (= {:a 1} (first (user-input/run [(user-input/required :c)
                                         (user-input/default :b 2)]
                                        {:a 1})))))
+
+(deftest integer
+  (is (= [{:a 1} {}] (user-input/run [(user-input/integer :a)] {:a "1"})))
+  (is (= [{:a 1} {}] (user-input/run [(user-input/integer :a)] {:a 1})))
+  (is (= [{:a 1} {}] (user-input/run [(user-input/integer :a)] {:a 1.0})))
+  (is (= #{:a} (error-keys [(user-input/integer :a)] {:a "1.1"})))
+  (is (= #{:a} (error-keys [(user-input/integer :a)] {:a "1.a"})))
+  (is (= #{:a} (error-keys [(user-input/integer :a)] {:a " 1"})))
+  (is (= #{:a} (error-keys [(user-input/integer :a)] {:a :b}))))
+
+(deftest float-test
+  (is (= [{:a (float 1.1)} {}]
+         (user-input/run [(user-input/float :a)] {:a "1.1"})))
+  (is (= [{:a (float 1.1)} {}]
+         (user-input/run [(user-input/float :a)] {:a 1.1})))
+  (is (= [{:a 1.0} {}] (user-input/run [(user-input/float :a)] {:a "1"})))
+  (is (= #{:a} (error-keys [(user-input/float :a)] {:a "1.a"}))))
+
+(deftest double-test
+  (is (= [{:a (double 1.1)} {}]
+         (user-input/run [(user-input/double :a)] {:a "1.1"})))
+  (is (= [{:a (double 1.1)} {}]
+         (user-input/run [(user-input/double :a)] {:a 1.1})))
+  (is (= [{:a 1.0} {}] (user-input/run [(user-input/double :a)] {:a "1"})))
+  (is (= #{:a} (error-keys [(user-input/double :a)] {:a "1.a"}))))
