@@ -85,6 +85,7 @@
   (is (= [{:a 1} {}] (user-input/run [(user-input/integer :a)] {:a "1"})))
   (is (= [{:a 1} {}] (user-input/run [(user-input/integer :a)] {:a 1})))
   (is (= [{:a 1} {}] (user-input/run [(user-input/integer :a)] {:a 1.0})))
+  (is (= [{:b 1.1} {}] (user-input/run [(user-input/integer :a)] {:b 1.1})))
   (is (= #{:a} (error-keys [(user-input/integer :a)] {:a "1.1"})))
   (is (= #{:a} (error-keys [(user-input/integer :a)] {:a "1.a"})))
   (is (= #{:a} (error-keys [(user-input/integer :a)] {:a " 1"})))

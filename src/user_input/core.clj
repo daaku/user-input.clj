@@ -117,7 +117,8 @@
                                   (~cast val#)))
               errors#]
              (catch NumberFormatException e# [data# (merge er# errors#)])
-             (catch ClassCastException e# [data# (merge er# errors#)])))))))
+             (catch ClassCastException e# [data# (merge er# errors#)]))
+           [data# errors#])))))
 
 (defnumber-parser integer Integer/parseInt int "integer")
 (defnumber-parser float Float/parseFloat clojure.core/float "number")
