@@ -1,7 +1,9 @@
 (ns user-input.test.core
   "Test user-input functionality."
   {:author "Naitik Shah"}
-  (:require [user-input.core :as user-input])
+  (:require
+    [clj-time.format :as ftime]
+    [user-input.core :as user-input])
   (:use [clojure.test :only [deftest testing is]]))
 
 (deftest is-email?
@@ -112,3 +114,12 @@
          (user-input/run [(user-input/double :a)] {:a 1.1})))
   (is (= [{:a 1.0} {}] (user-input/run [(user-input/double :a)] {:a "1"})))
   (is (= #{:a} (error-keys [(user-input/double :a)] {:a "1.a"}))))
+
+(def datetime-filter
+  (user-input/datetime (ftime/formatter "yyyy-MM-dd'T'hh:mm'Z'") :time))
+
+(deftest datetime
+  (is (= org.joda.time.DateTime
+         (type (:time (first (datetime-filter
+                               {:time "2011-11-21T05:51Z"} {}))))))
+  (is (= #{:time} (error-keys [datetime-filter] {:time "1"}))))

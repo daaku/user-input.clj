@@ -3,6 +3,9 @@
   validating it, returning error messages as appropriate."
   {:author "Naitik Shah"}
   (:refer-clojure :exclude [filter drop float double])
+  (:require
+    [clj-time.core :as ctime]
+    [clj-time.format :as ftime])
   (:use
     [clojure.string :only [join trim blank?] :rename {trim str-trim}]))
 
@@ -131,6 +134,18 @@
 (defnumber-parser integer Integer/parseInt int "integer")
 (defnumber-parser float Float/parseFloat clojure.core/float "number")
 (defnumber-parser double Double/parseDouble clojure.core/double "number")
+
+(defn- datetime* [formatter [data errors] key]
+  (if-let [val (data key)]
+    (try
+      [(assoc data key (ftime/parse formatter val)) errors]
+      (catch IllegalArgumentException e
+        [data (merge {key "Must be a valid date & time."} errors)]))
+    [data errors]))
+
+(defn datetime [formatter & keys]
+  (fn [data errors]
+    (reduce (partial datetime* formatter) [data errors] keys)))
 
 (defn run [fns data]
   (reduce (fn [[data errors] f] (f data errors)) [data {}] fns))
