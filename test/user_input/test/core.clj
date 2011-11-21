@@ -56,6 +56,12 @@
   (is (= [{:a 1 :c ""} {}]
          (user-input/run [(user-input/drop-empty :b)] {:a 1 :b "" :c ""}))))
 
+(deftest nil-empty
+  (is (= [{:a 1 :b nil} {}]
+         (user-input/run [(user-input/nil-empty)] {:a 1 :b ""})))
+  (is (= [{:a 1 :b nil :c ""} {}]
+         (user-input/run [(user-input/nil-empty :b)] {:a 1 :b "" :c ""}))))
+
 (defn- error-keys [fns data]
   (set (keys (get (user-input/run fns data) 1))))
 

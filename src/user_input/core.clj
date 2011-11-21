@@ -69,6 +69,14 @@
                              (not (missing? v))))
                  data))))
 
+(deftransform nil-empty [data & keys]
+  (let [keys (if (seq keys) (set keys) nil)]
+    (into {} (map
+               (fn [[k v]] (if (or (and keys (not (keys k))) (not (missing? v)))
+                             [k v]
+                             [k nil]))
+                 data))))
+
 (defvalidator required [data & keys]
   (apply merge
          (map #(if (missing? (get data %)) {% "This is required."}) keys)))
