@@ -2,7 +2,7 @@
   "A library to process incoming user input, including transforming it and
   validating it, returning error messages as appropriate."
   {:author "Naitik Shah"}
-  (:refer-clojure :exclude [filter drop float double])
+  (:refer-clojure :exclude [filter drop float double time])
   (:require
     [clj-time.core :as ctime]
     [clj-time.format :as ftime])
@@ -135,7 +135,7 @@
 (defnumber-parser float Float/parseFloat clojure.core/float "number")
 (defnumber-parser double Double/parseDouble clojure.core/double "number")
 
-(defn- datetime* [formatter [data errors] key]
+(defn- time* [formatter [data errors] key]
   (if-let [val (data key)]
     (try
       [(assoc data key (ftime/parse formatter val)) errors]
@@ -143,9 +143,23 @@
         [data (merge {key "Must be a valid date & time."} errors)]))
     [data errors]))
 
-(defn datetime [formatter & keys]
+(defn time [formatter & keys]
   (fn [data errors]
-    (reduce (partial datetime* formatter) [data errors] keys)))
+    (reduce (partial time* formatter) [data errors] keys)))
+
+(defvalidator time< [data less-key more-key]
+  (if-let [less (data less-key)]
+    (if-let [more (data more-key)]
+      (if (not (ctime/before? less more))
+        {less-key (str "Must be before " (as-str more-key) ".")
+         more-key (str "Must be after " (as-str less-key) ".")}))))
+
+(defvalidator time<= [data less-key more-key]
+  (if-let [less (data less-key)]
+    (if-let [more (data more-key)]
+      (if (ctime/after? less more)
+        {less-key (str "Must be on or before " (as-str more-key) ".")
+         more-key (str "Must be on or after " (as-str less-key) ".")}))))
 
 (defn run [fns data]
   (reduce (fn [[data errors] f] (f data errors)) [data {}] fns))

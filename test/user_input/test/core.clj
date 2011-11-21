@@ -115,11 +115,45 @@
   (is (= [{:a 1.0} {}] (user-input/run [(user-input/double :a)] {:a "1"})))
   (is (= #{:a} (error-keys [(user-input/double :a)] {:a "1.a"}))))
 
-(def datetime-filter
-  (user-input/datetime (ftime/formatter "yyyy-MM-dd'T'hh:mm'Z'") :time))
+(def time-filter
+  (user-input/time (ftime/formatter "yyyy-MM-dd'T'hh:mm'Z'") :time :time2))
 
-(deftest datetime
+(deftest time-test
   (is (= org.joda.time.DateTime
-         (type (:time (first (datetime-filter
+         (type (:time (first (time-filter
                                {:time "2011-11-21T05:51Z"} {}))))))
-  (is (= #{:time} (error-keys [datetime-filter] {:time "1"}))))
+  (is (= #{:time} (error-keys [time-filter] {:time "1"}))))
+
+(deftest time<
+  (is (= #{:time :time2} (error-keys [time-filter
+                                      (user-input/time< :time :time2)]
+                                     {:time "2011-11-21T05:51Z"
+                                      :time2 "2011-11-21T05:51Z"}))
+      "Equal values are not accepted")
+  (is (= #{:time :time2} (error-keys [time-filter
+                                      (user-input/time< :time :time2)]
+                                     {:time "2012-11-21T05:51Z"
+                                      :time2 "2011-11-21T05:51Z"}))
+      "Greater values are not accepted")
+  (is (= #{} (error-keys [time-filter
+                          (user-input/time< :time :time2)]
+                         {:time "2010-11-21T05:51Z"
+                          :time2 "2011-11-21T05:51Z"}))
+      "Lower values are accepted"))
+
+(deftest time<=
+  (is (= #{} (error-keys [time-filter
+                          (user-input/time<= :time :time2)]
+                         {:time "2011-11-21T05:51Z"
+                          :time2 "2011-11-21T05:51Z"}))
+      "Equal values are accepted")
+  (is (= #{:time :time2} (error-keys [time-filter
+                                      (user-input/time<= :time :time2)]
+                                     {:time "2012-11-21T05:51Z"
+                                      :time2 "2011-11-21T05:51Z"}))
+      "Greater values are not accepted")
+  (is (= #{} (error-keys [time-filter
+                          (user-input/time<= :time :time2)]
+                         {:time "2010-11-21T05:51Z"
+                          :time2 "2011-11-21T05:51Z"}))
+      "Lower values are accepted"))
