@@ -2,4 +2,4 @@ user-input
 ==========
 
 Transform, validate and prepare user input. Documentation is available at:
-https://github.com/nshah/user-input.clj
+http://code.daaku.org/user-input.clj/
