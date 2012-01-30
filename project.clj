@@ -1,4 +1,4 @@
-(defproject user-input "1.0.11"
+(defproject user-input "1.0.12"
   :description "Transform, validate and prepare user input."
   :author "Naitik Shah <n@daaku.org>"
   :url "https://github.com/nshah/user-input.clj"

@@ -1,15 +1,25 @@
-;; A library to process incoming user input, including transforming it and
-;; validating it, returning error messages as appropriate.
-;;
-;; At it's core, this library follows a simple protocol:
-;;
-;;      (process data errors) -> [data errors]
-;;
-;; That is, a process takes two maps, the input data and the current errors and
-;; returns new versions of both. This is basic premise behind the `run`
-;; function which is a simple `reduce` with this contract in mind.
 (ns user-input.core
-  "Transform, validate and prepare user input."
+  "A library to process incoming user input, including transforming it and
+   validating it, returning error messages as appropriate.
+
+   At it's core, this library follows a simple protocol:
+
+    (process data errors) -> [data errors]
+
+   That is, a process takes two maps, the input data and the current errors and
+   returns new versions of both. This is basic premise behind the `run`
+   function which is a simple `reduce` with this contract in mind.
+
+   With that in mind, an ordered vector of such functions forms for the \"input
+   process\". For example:
+
+    (def login-process
+      [(user-input.core/filter :login :password :remember-me)
+       (user-input.core/required :login :password)])
+
+   Which can then be applied as:
+
+    (user-input.core/run login-process {:user \"jon\"})"
   {:author "Naitik Shah"}
   (:refer-clojure :exclude [filter drop float double time])
   (:require
@@ -76,7 +86,7 @@
   [value]
   true)
 
-;; # Processes
+;; # Generic Processes
 ;; Generic types of processes that get applied to user input:
 
 (defmacro defvalidator
@@ -146,6 +156,10 @@
 (defvalidator password [data main confirm]
   (if (not (= (get data main) (get data confirm)))
     {confirm "Passwords do not match."}))
+
+;; # Post-Processing
+;; These are applied only if there are no errors. You'll typically have these
+;; listed at the bottom of your process vector.
 
 (defpostprocess drop [data & keys]
   (apply dissoc data keys))
