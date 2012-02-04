@@ -7,7 +7,7 @@
     [[clj-time "0.3.3"]
      [org.clojure/clojure "1.3.0"]]
   :dev-dependencies
-    [[auto-reload "1.0.1"]
+    [[auto-reload "1.0.2"]
      [lein-marginalia "0.7.0-SNAPSHOT"]
      [org.clojure/clojure "1.3.0"]
      [vimclojure/server "2.3.0-SNAPSHOT"]])
