@@ -1,23 +1,27 @@
 (ns user-input.core
-  "A library to process incoming user input, including transforming it and
-   validating it, returning error messages as appropriate.
+  "<a href='http://travis-ci.org/nshah/user-input.clj'>
+  <img src='https://secure.travis-ci.org/nshah/user-input.clj.png'>
+  </a>
 
-   At it's core, this library follows a simple protocol:
+  A library to process incoming user input, including transforming it and
+  validating it, returning error messages as appropriate.
+
+  At it's core, this library follows a simple protocol:
 
     (process data errors) -> [data errors]
 
-   That is, a process takes two maps, the input data and the current errors and
-   returns new versions of both. This is basic premise behind the `run`
-   function which is a simple `reduce` with this contract in mind.
+  That is, a process takes two maps, the input data and the current errors and
+  returns new versions of both. This is basic premise behind the `run`
+  function which is a simple `reduce` with this contract in mind.
 
-   With that in mind, an ordered vector of such functions forms for the \"input
-   process\". For example:
+  With that in mind, an ordered vector of such functions forms for the \"input
+  process\". For example:
 
     (def login-process
       [(user-input.core/filter :login :password :remember-me)
        (user-input.core/required :login :password)])
 
-   Which can then be applied as:
+  Which can then be applied as:
 
     (user-input.core/run login-process {:user \"jon\"})"
   {:author "Naitik Shah"}
