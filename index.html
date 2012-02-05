@@ -3123,27 +3123,31 @@ $(document).ready(function() {
 
 })
 </script><title>user-input -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">user-input</h1><h2 class="project-version">1.0.13</h2><br /><p>Transform, validate and prepare user input.</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">clj-time</td><td class="dotted"><hr /></td><td class="dep-version">0.3.3</td></tr><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.3.0</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">auto-reload</td><td class="dotted"><hr /></td><td class="dep-version">1.0.2</td></tr><tr><td class="dep-name">lein-marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.7.0-SNAPSHOT</td></tr><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.3.0</td></tr><tr><td class="dep-name">org.clojure/tools.logging</td><td class="dotted"><hr /></td><td class="dep-version">0.2.3</td></tr><tr><td class="dep-name">vimclojure/server</td><td class="dotted"><hr /></td><td class="dep-version">2.3.0-SNAPSHOT</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#user-input.core">user-input.core</a></li><li><a href="#user-input.repl">user-input.repl</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#user-input.core" name="user-input.core"><h1 class="project-name">user-input.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>A library to process incoming user input, including transforming it and
-   validating it, returning error messages as appropriate.</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">clj-time</td><td class="dotted"><hr /></td><td class="dep-version">0.3.3</td></tr><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.3.0</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">auto-reload</td><td class="dotted"><hr /></td><td class="dep-version">1.0.3</td></tr><tr><td class="dep-name">lein-marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.7.0-SNAPSHOT</td></tr><tr><td class="dep-name">org.clojure/tools.logging</td><td class="dotted"><hr /></td><td class="dep-version">0.2.3</td></tr><tr><td class="dep-name">vimclojure/server</td><td class="dotted"><hr /></td><td class="dep-version">2.3.0-SNAPSHOT</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#user-input.core">user-input.core</a></li><li><a href="#user-input.repl">user-input.repl</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#user-input.core" name="user-input.core"><h1 class="project-name">user-input.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p><a href='http://travis-ci.org/nshah/user-input.clj'>
+  <img src='https://secure.travis-ci.org/nshah/user-input.clj.png'>
+  </a></p>
 
-<p>   At it's core, this library follows a simple protocol:</p>
+<p>  A library to process incoming user input, including transforming it and
+  validating it, returning error messages as appropriate.</p>
+
+<p>  At it's core, this library follows a simple protocol:</p>
 
 <pre><code>(process data errors) -&gt; [data errors]
 </code></pre>
 
-<p>   That is, a process takes two maps, the input data and the current errors and
-   returns new versions of both. This is basic premise behind the <code>run</code>
-   function which is a simple <code>reduce</code> with this contract in mind.</p>
+<p>  That is, a process takes two maps, the input data and the current errors and
+  returns new versions of both. This is basic premise behind the <code>run</code>
+  function which is a simple <code>reduce</code> with this contract in mind.</p>
 
-<p>   With that in mind, an ordered vector of such functions forms for the "input
-   process". For example:</p>
+<p>  With that in mind, an ordered vector of such functions forms for the "input
+  process". For example:</p>
 
 <pre><code>(def login-process
   [(user-input.core/filter :login :password :remember-me)
    (user-input.core/required :login :password)])
 </code></pre>
 
-<p>   Which can then be applied as:</p>
+<p>  Which can then be applied as:</p>
 
 <pre><code>(user-input.core/run login-process {:user "jon"})
 </code></pre>
